@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-register',
@@ -8,25 +9,37 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  registerForm!: FormGroup;
 
-  constructor(private router:Router, private authService: AuthService) { }
-  username: string = '';
-  password: string = '';
+  constructor(private formBuilder: FormBuilder,private router:Router,private authService: AuthService) {}
 
-  ngOnInit(): void {
-  }
-  onRegister(username: string, password: string) {
-    this.authService.register(this.username, password).subscribe(
-      (response) => {
-        this.router.navigate(['/login']);
-      },
-      (error) => {
-        console.log("wooo, we fucked up , will be right back");
-      }
-    );
+  ngOnInit() {
+    this.registerForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+    this.registerForm.reset();
   }
 
-  navigateToLogin() {
+  onRegister() {
+    if (this.registerForm.valid) {
+      const email = this.registerForm!.get('email')!.value;
+      const password = this.registerForm!.get('password')!.value;
+
+      this.authService.register(email, password).subscribe(
+        (response) => {
+          this.registerForm.reset()
+          this.router.navigate(['/home']);
+        },
+        (error) => {
+          console.log("wooo, we fucked up , will be right back");
+        }
+      );
+    }
+  }
+ navigateToLogin() {
+    this.registerForm.reset()
     this.router.navigate(['/login']);
   }
+
 }

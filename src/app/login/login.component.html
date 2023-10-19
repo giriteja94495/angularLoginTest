@@ -1,15 +1,41 @@
-<div class="login-container">
-  <h2>Login</h2>
-  <form (ngSubmit)="onLogin(username,password)">
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" [(ngModel)]="username" required>
+<h2 class="text-center">If you enter wrong details , i will hunt you down and break your nose</h2>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" formControlName="email" class="form-control" required>
+              <div *ngIf="loginForm.get('email')?.dirty && loginForm.get('email')?.hasError('required')" class="text-danger">
+                Email is required.
+              </div>
+              <div *ngIf="loginForm.get('email')?.dirty && loginForm.get('email')?.hasError('email')" class="text-danger">
+                Invalid email format.
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" formControlName="password" class="form-control" required>
+              <div *ngIf=" loginForm.get('password')?.dirty &&  loginForm.get('password')?.hasError('required')" class="text-danger">
+                Password is required.
+              </div>
+              <div *ngIf="loginForm.get('password')?.dirty && loginForm.get('password')?.hasError('minlength')" class="text-danger">
+                Min len of password is 6.
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!loginForm.valid">Login</button>
+          </form>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <button (click)="navigateToRegsiter()" class="btn btn-link">Don't have an account? Register here</button>
+      </div>
+      <div  *ngIf="hacker"  class="text-center mt-3">
+        <button type="button" class="btn btn-danger">{{"Don't be here if you don't remember your password"}}</button>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" [(ngModel)]="password" required>
-    </div>
-    <button type="submit">Login</button>
-  </form>
-  <a (click)="navigateToRegister()">Don't have an account? Register here.</a>
+  </div>
 </div>
